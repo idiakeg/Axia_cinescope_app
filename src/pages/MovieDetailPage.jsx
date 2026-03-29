@@ -1,8 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
-import movie_banner from "../assets/blog921b2d4013-4f56-409c-9c73-e9c2fdd36d5a.jpg";
+import { useFetch } from "../context/FetchProvider";
+import formatRuntime from "../utils/getRunTIme";
+import TopCast from "../components/TopCast";
+import SimilarMovies from "../components/SimilarMovies";
 
 const MovieDetailPage = () => {
     const navigate = useNavigate();
+    const { movieDetail, topCast, similarMovies } = useFetch();
+
+    const runTime = formatRuntime(movieDetail?.runtime);
+
+    console.log("movie detail from movie details page: ", movieDetail);
 
     return (
         <div className="mt-[80px] min-h-[calc(100dvh-80px)] py-5 pb-10">
@@ -14,9 +22,9 @@ const MovieDetailPage = () => {
                     <i className="ri-arrow-left-line text-[20px]"></i>
                 </Link>
                 {/* movie banner */}
-                <div className="movie_banner h-[250px]">
+                <div className="movie_banner h-[450px]">
                     <img
-                        src={movie_banner}
+                        src={`https://image.tmdb.org/t/p/w1280${movieDetail?.backdrop_path}`}
                         alt="movie banner"
                         className="w-full h-full object-cover"
                     />
@@ -25,69 +33,60 @@ const MovieDetailPage = () => {
                 <div className="movie_full_detail flex gap-4 md:gap-[40px] flex-col lg:flex-row">
                     <div className="movie_image lg:w-[30%] lg:rounded-[30px] h-[200px] lg:h-auto w-full overflow-hidden rounded-xl">
                         <img
-                            src={movie_banner}
+                            src={`https://image.tmdb.org/t/p/w1280${movieDetail?.poster_path}`}
                             alt="movie banner"
                             className="w-full h-full object-cover"
                         />
                     </div>
                     <div className="movie_details_proper font-Comic flex-1 space-y-2 md:space-y-3 overflow-x-auto">
                         <h1 className="upper text-[20px] md:text-[30px] font-semibold">
-                            DUNE: PART TWO
+                            {movieDetail?.original_title}
                         </h1>
-                        <p className="capitalize  italic">
+                        {/* <p className="capitalize  italic">
                             long live the fighters
-                        </p>
+                        </p> */}
                         <div className="movie_detail_pills flex gap-3 items-center flex-wrap gap-y-2">
                             <span className="movie_rating px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-star-line mr-[2px] md:mr-2 text-cream"></i>
-                                8.9/10
+                                {movieDetail?.vote_average?.toFixed(1)}/10
                             </span>
                             <span className="movie_calendar px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-calendar-2-line mr-[2px] md:text-[16px] md:mr-2"></i>
-                                2024
+                                {movieDetail?.release_date?.split("-")[0]}
                             </span>
                             <span className="movie_running_time px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-time-line mr-[2px] md:mr-2"></i>
-                                3h 46m
+                                {runTime}
                             </span>
                             <span className="movie_running_time px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-user-fill mr-[2px] md:mr-2"></i>
-                                250K votes
+                                {movieDetail?.vote_count} votes
                             </span>
                         </div>
                         <p className="text-justify text-[12px] md:text-[14px]">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Ipsum perspiciatis dolores vitae consectetur
-                            quam quas eaque, quos suscipit delectus illo.
+                            {movieDetail.overview}
                         </p>
                         <button className="border border-red-300 px-3 md:px-4 py-1 rounded-[20px] flex items-center bg-red-400 text-white btn_hover hover:shadow-md text-[14px] md:text-[16px]">
                             <i className="ri-heart-fill mr-[2px] md:mr-2"></i>
                             Add to Watchlist
                         </button>
+                        {/* top cast */}
                         <div className="top_cast">
                             <h2 className="font-semibold mb-2">Top Cast</h2>
                             <div className="top_cast_container flex gap-4 overflow-x-auto">
-                                {Array.from({ length: 8 }).map(
-                                    (item, index) => (
-                                        <>
-                                            <div className="top_cast_card">
-                                                <div className="cast_card w-[150px] flex flex-col items-center leading-tight">
-                                                    <div className="w-[75px] md:w-[100px] h-[75px] md:h-[100px] rounded-[50%] overflow-hidden mb-2">
-                                                        <img
-                                                            src={movie_banner}
-                                                            alt="cast member"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <span className="actor_name capitalize text-[13px] md:text-[16px] font-[600]">
-                                                        Chris hemsworth
-                                                    </span>
-                                                    <span className="actor_character text-[11px] md:text-[15px]">
-                                                        as Thor
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </>
+                                {topCast?.map(
+                                    ({
+                                        cast_id,
+                                        profile_path,
+                                        original_name,
+                                        character,
+                                    }) => (
+                                        <TopCast
+                                            key={cast_id}
+                                            image={profile_path}
+                                            cast_name={original_name}
+                                            character={character}
+                                        />
                                     )
                                 )}
                             </div>
@@ -100,35 +99,24 @@ const MovieDetailPage = () => {
                         Similar movies
                     </h3>
                     <div className="similar_movie_card_container overflow-x-auto flex gap-3">
-                        {Array.from({ length: 9 }).map((item, index) => (
-                            <>
-                                {" "}
-                                <div
-                                    to={"/movie_detail"}
-                                    className="block movie_card border rounded-[20px] overflow-hidden pb-3 w-[200px] md:w-[220px] shrink-0"
-                                >
-                                    <div className="movie_image h-[150px] md:h-[200px] bg-gray-400 relative">
-                                        <img
-                                            src={movie_banner}
-                                            alt=""
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="px-3 py-1">
-                                        <span className="block font-semibold text-center my-[3px] text-[14px] md:text-[16px] break-words leading-tight">
-                                            Inception
-                                        </span>
-                                        <span className="block text-[12px] md:text-[14px] text-center">
-                                            2010
-                                        </span>
-                                        <span className="block text-[12px] md:text-[14px] font-semibold text-right mt-[-22px] ">
-                                            <i className="ri-star-fill text-cream"></i>{" "}
-                                            8.8
-                                        </span>
-                                    </div>
-                                </div>
-                            </>
-                        ))}
+                        {similarMovies?.map(
+                            ({
+                                id,
+                                original_title,
+                                release_date,
+                                vote_average,
+                                poster_path,
+                            }) => (
+                                <SimilarMovies
+                                    id={id}
+                                    key={id}
+                                    title={original_title}
+                                    release_date={release_date}
+                                    rating={vote_average}
+                                    image={poster_path}
+                                />
+                            )
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
+import { useFetch } from "../context/FetchProvider";
 
-const TrendingMovies = ({ title, release_date, rating, image }) => {
+const TrendingMovies = ({ id, title, release_date, rating, image }) => {
+    const { fetchMovieDetail, fetchTopCast } = useFetch();
     return (
         <Link
+            onClick={() => {
+                fetchMovieDetail(id);
+                fetchTopCast(id);
+            }}
             to={"/movie_detail"}
             className="block movie_card  border rounded-[20px] overflow-hidden pb-3 hover:-translate-y-1 transition-transform duration-200 hover:shadow-lg hover:scale-105"
         >
@@ -19,7 +25,7 @@ const TrendingMovies = ({ title, release_date, rating, image }) => {
                     {title}
                 </span>
                 <span className="block text-[14px] text-center">
-                    {release_date}
+                    {release_date?.split("-")[0]}
                 </span>
                 <span className="block text-[14px] font-semibold text-right mt-[-22px] ">
                     <i className="ri-star-fill text-cream"></i>{" "}

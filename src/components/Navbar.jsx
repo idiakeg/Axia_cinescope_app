@@ -1,13 +1,18 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
     const [menu, setMenu] = useState(false);
+
     return (
         <nav className="fixed top-0 left-0 z-50 w-full bg-grass">
             <div className="container mx-auto w-[95%] md:w-[90%] max-w-[1240px] nav_container flex justify-between items-center py-4 relative">
-                <div className="logo text-cream font-Comic text-[20px] md:text-[24px] uppercase tracking-wider font-extrabold">
+                <Link
+                    to={"/"}
+                    className="logo text-cream font-Comic text-[20px] md:text-[24px] uppercase tracking-wider font-extrabold hover:scale-105 transition duration-200"
+                >
                     Cinescope
-                </div>
+                </Link>
                 {/* search bar */}
                 <div className="search_bar hidden lg:flex border border-green-300 w-[50%] rounded-[20px] overflow-hidden  items-stretch cursor-pointer">
                     <input

@@ -7,11 +7,12 @@ import GenreList from "../components/GenreList";
 import TrendingMovies from "../components/TrendingMovies";
 
 const Homepage = () => {
-    const { movieGenre, trendingMovies } = useFetch();
+    const { movieGenre, trendingMovies, fetchMovieDetail, fetchTopCast } =
+        useFetch();
     const [highlightMovie, ...remainingMovies] = trendingMovies.results || [];
     const genreList = getGenre(highlightMovie, movieGenre);
 
-    console.log("remainig movies: ", remainingMovies);
+    console.log("highlight movies: ", highlightMovie);
 
     return (
         <div className="mt-[80px] min-h-[calc(100dvh-80px)] py-5 pb-10">
@@ -37,6 +38,10 @@ const Homepage = () => {
                     <Link
                         to={"/movie_detail"}
                         className="w-fit capitalize py-1 px-5 text-[15px] md:text-[20px] font-medium bg-green-400 rounded-[30px] btn_hover"
+                        onClick={() => {
+                            fetchMovieDetail(highlightMovie?.id);
+                            fetchTopCast(highlightMovie?.id);
+                        }}
                     >
                         View Details
                     </Link>
@@ -56,6 +61,7 @@ const Homepage = () => {
                             backdrop_path,
                         }) => (
                             <TrendingMovies
+                                id={id}
                                 key={id}
                                 title={original_title}
                                 release_date={release_date}

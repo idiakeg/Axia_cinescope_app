@@ -7,9 +7,15 @@ const FetchContext = createContext();
 const FetchProvider = ({ children }) => {
     const [trendingMovies, setTrendingMovies] = useState([]);
     const [movieGenre, setMovieGenre] = useState([]);
+    const [movieDetail, setMovieDetail] = useState([]);
+    const [topCast, setTopCast] = useState([]);
+    const [similarMovies, setSimilarMovies] = useState([]);
+
     useEffect(() => {
         fetchTrendingMovie();
         fetchMovieGenre();
+        fetchTopCast(687163);
+        fetchSimilarMovies(1327819);
     }, []);
 
     // ====> Fetch trending movies
@@ -32,8 +38,48 @@ const FetchProvider = ({ children }) => {
         console.log(result.genres);
     };
 
+    // ====> Fetch movie details
+    const fetchMovieDetail = async (id) => {
+        const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
+        );
+        const result = await response.json();
+        setMovieDetail(result);
+        console.log("movie detail: ", result);
+    };
+
+    // ====> Fetch top cast
+    const fetchTopCast = async (id) => {
+        const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${apiKey}&language=en-US`
+        );
+        const result = await response.json();
+        setTopCast(result.cast);
+        console.log("top cast: ", result.cast);
+    };
+
+    // ====> Fetch similar movies
+    const fetchSimilarMovies = async (id) => {
+        const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${apiKey}&language=en-US`
+        );
+        const result = await response.json();
+        setSimilarMovies(result.results);
+        console.log("similar movies: ", result.results);
+    };
+
     return (
-        <FetchContext.Provider value={{ trendingMovies, movieGenre }}>
+        <FetchContext.Provider
+            value={{
+                trendingMovies,
+                movieGenre,
+                fetchMovieDetail,
+                movieDetail,
+                topCast,
+                fetchTopCast,
+                similarMovies,
+            }}
+        >
             {children}
         </FetchContext.Provider>
     );
