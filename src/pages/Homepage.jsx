@@ -7,18 +7,27 @@ import GenreList from "../components/GenreList";
 import TrendingMovies from "../components/TrendingMovies";
 
 const Homepage = () => {
-    const { movieGenre, trendingMovies, fetchMovieDetail, fetchTopCast } =
-        useFetch();
-    const [highlightMovie, ...remainingMovies] = trendingMovies.results || [];
-    const genreList = getGenre(highlightMovie, movieGenre);
+    const {
+        movieGenre,
+        trendingMovies,
+        fetchMovieDetail,
+        fetchTopCast,
+        fetchSimilarMovies,
+    } = useFetch();
+    const [highlightMovie, ...remainingMovies] =
+        trendingMovies.results ||
+        JSON.parse(localStorage.getItem("trending_movies"));
+    const genreList =
+        getGenre(highlightMovie, movieGenre) ||
+        JSON.parse(localStorage.getItem("movie_genre"));
 
     console.log("highlight movies: ", highlightMovie);
 
     return (
         <div className="mt-[80px] min-h-[calc(100dvh-80px)] py-5 pb-10">
-            <div className="container space-y-8 mx-auto w-[95%] md:w-[90%] max-w-[1240px]">
+            <div className="container space-y-8 mx-auto w-[92%] md:w-[90%] max-w-[1240px]">
                 <div
-                    className="hero_section h-[300px] md:h-[350px] rounded-tl-[30px] rounded-bl-[30px] bg-no-repeat bg-center bg-cover flex flex-col gap-5 justify-center px-5 md:px-10 font-Comic text-white"
+                    className="hero_section h-[300px] md:h-[450px] rounded-tl-[30px] rounded-bl-[30px] bg-no-repeat bg-center bg-cover flex flex-col gap-5 justify-center px-5 md:px-10 font-Comic text-white"
                     style={{
                         backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0) 60%),
       url(https://image.tmdb.org/t/p/w1280${highlightMovie?.backdrop_path})`,
@@ -41,6 +50,7 @@ const Homepage = () => {
                         onClick={() => {
                             fetchMovieDetail(highlightMovie?.id);
                             fetchTopCast(highlightMovie?.id);
+                            fetchSimilarMovies(highlightMovie?.id);
                         }}
                     >
                         View Details

@@ -8,13 +8,32 @@ const MovieDetailPage = () => {
     const navigate = useNavigate();
     const { movieDetail, topCast, similarMovies } = useFetch();
 
-    const runTime = formatRuntime(movieDetail?.runtime);
+    const runTime =
+        formatRuntime(movieDetail?.runtime) ||
+        formatRuntime(JSON.parse(localStorage.getItem("movie_detail")).runtime);
 
-    console.log("movie detail from movie details page: ", movieDetail);
+    const castToRender = topCast.length
+        ? topCast
+        : JSON.parse(localStorage.getItem("top_cast"));
+
+    const storedMovieDetail =
+        JSON.parse(localStorage.getItem("movie_detail")) || {};
+
+    console.log(
+        "from local storage",
+        JSON.parse(localStorage.getItem("top_cast"))
+    );
+
+    const similarMoviesToRender =
+        similarMovies.length >= 1
+            ? similarMovies
+            : JSON.parse(localStorage.getItem("similar_movies"));
+
+    console.log("similar movies form local storage: ", similarMovies);
 
     return (
         <div className="mt-[80px] min-h-[calc(100dvh-80px)] py-5 pb-10">
-            <div className="movie_detail_container container mx-auto w-[95%] md:w-[90%] max-w-[1240px] space-y-4 md:space-y-10">
+            <div className="movie_detail_container container mx-auto w-[92%] md:w-[90%] max-w-[1240px] space-y-4 md:space-y-10">
                 <Link
                     onClick={() => navigate(-1)}
                     className="border border-green-300 py-1 px-[6px] rounded-[50%] hover:bg-green-300 hover:text-white transition-all duration-200"
@@ -24,23 +43,30 @@ const MovieDetailPage = () => {
                 {/* movie banner */}
                 <div className="movie_banner h-[450px]">
                     <img
-                        src={`https://image.tmdb.org/t/p/w1280${movieDetail?.backdrop_path}`}
+                        src={`https://image.tmdb.org/t/p/w1280${
+                            movieDetail?.backdrop_path ||
+                            storedMovieDetail.backdrop_path
+                        }`}
                         alt="movie banner"
                         className="w-full h-full object-cover"
                     />
                 </div>
                 {/* movie detail */}
                 <div className="movie_full_detail flex gap-4 md:gap-[40px] flex-col lg:flex-row">
-                    <div className="movie_image lg:w-[30%] lg:rounded-[30px] h-[200px] lg:h-auto w-full overflow-hidden rounded-xl">
+                    <div className="movie_image lg:w-[30%] lg:rounded-[30px] h-auto w-full overflow-hidden rounded-xl">
                         <img
-                            src={`https://image.tmdb.org/t/p/w1280${movieDetail?.poster_path}`}
+                            src={`https://image.tmdb.org/t/p/w1280${
+                                movieDetail?.poster_path ||
+                                storedMovieDetail.backdrop_path
+                            }`}
                             alt="movie banner"
                             className="w-full h-full object-cover"
                         />
                     </div>
                     <div className="movie_details_proper font-Comic flex-1 space-y-2 md:space-y-3 overflow-x-auto">
                         <h1 className="upper text-[20px] md:text-[30px] font-semibold">
-                            {movieDetail?.original_title}
+                            {movieDetail?.original_title ||
+                                storedMovieDetail.original_title}
                         </h1>
                         {/* <p className="capitalize  italic">
                             long live the fighters
@@ -48,11 +74,18 @@ const MovieDetailPage = () => {
                         <div className="movie_detail_pills flex gap-3 items-center flex-wrap gap-y-2">
                             <span className="movie_rating px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-star-line mr-[2px] md:mr-2 text-cream"></i>
-                                {movieDetail?.vote_average?.toFixed(1)}/10
+                                {movieDetail?.vote_average?.toFixed(1) ||
+                                    JSON.parse(
+                                        localStorage.getItem("movie_detail")
+                                    ).vote_average.toFixed(1)}
+                                /10
                             </span>
                             <span className="movie_calendar px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-calendar-2-line mr-[2px] md:text-[16px] md:mr-2"></i>
-                                {movieDetail?.release_date?.split("-")[0]}
+                                {movieDetail?.release_date?.split("-")[0] ||
+                                    JSON.parse(
+                                        localStorage.getItem("movie_detail")
+                                    ).release_date.split("-")[0]}
                             </span>
                             <span className="movie_running_time px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-time-line mr-[2px] md:mr-2"></i>
@@ -60,11 +93,17 @@ const MovieDetailPage = () => {
                             </span>
                             <span className="movie_running_time px-[6px] py-1 text-[13px] md:text-[16px] md:px-3 md:py-[3px] rounded-[20px] bg-[#8B5E3C] text-white">
                                 <i className="ri-user-fill mr-[2px] md:mr-2"></i>
-                                {movieDetail?.vote_count} votes
+                                {movieDetail?.vote_count ||
+                                    JSON.parse(
+                                        localStorage.getItem("movie_detail")
+                                    ).vote_count}{" "}
+                                votes
                             </span>
                         </div>
                         <p className="text-justify text-[12px] md:text-[14px]">
-                            {movieDetail.overview}
+                            {movieDetail.overview ||
+                                JSON.parse(localStorage.getItem("movie_detail"))
+                                    .overview}
                         </p>
                         <button className="border border-red-300 px-3 md:px-4 py-1 rounded-[20px] flex items-center bg-red-400 text-white btn_hover hover:shadow-md text-[14px] md:text-[16px]">
                             <i className="ri-heart-fill mr-[2px] md:mr-2"></i>
@@ -74,7 +113,7 @@ const MovieDetailPage = () => {
                         <div className="top_cast">
                             <h2 className="font-semibold mb-2">Top Cast</h2>
                             <div className="top_cast_container flex gap-4 overflow-x-auto">
-                                {topCast?.map(
+                                {castToRender?.map(
                                     ({
                                         cast_id,
                                         profile_path,
@@ -99,7 +138,7 @@ const MovieDetailPage = () => {
                         Similar movies
                     </h3>
                     <div className="similar_movie_card_container overflow-x-auto flex gap-3">
-                        {similarMovies?.map(
+                        {similarMoviesToRender?.map(
                             ({
                                 id,
                                 original_title,

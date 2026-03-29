@@ -14,8 +14,6 @@ const FetchProvider = ({ children }) => {
     useEffect(() => {
         fetchTrendingMovie();
         fetchMovieGenre();
-        fetchTopCast(687163);
-        fetchSimilarMovies(1327819);
     }, []);
 
     // ====> Fetch trending movies
@@ -26,6 +24,7 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         console.log("trending movies: ", result);
         setTrendingMovies(result);
+        localStorage.setItem("trending_movies", JSON.stringify(result.results));
     };
 
     // ====> Fetch movie genre
@@ -36,6 +35,7 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setMovieGenre(result.genres);
         console.log(result.genres);
+        localStorage.setItem("movie_genre", JSON.stringify(result.genres));
     };
 
     // ====> Fetch movie details
@@ -46,6 +46,7 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setMovieDetail(result);
         console.log("movie detail: ", result);
+        localStorage.setItem("movie_detail", JSON.stringify(result));
     };
 
     // ====> Fetch top cast
@@ -56,6 +57,7 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setTopCast(result.cast);
         console.log("top cast: ", result.cast);
+        localStorage.setItem("top_cast", JSON.stringify(result.cast));
     };
 
     // ====> Fetch similar movies
@@ -66,6 +68,7 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setSimilarMovies(result.results);
         console.log("similar movies: ", result.results);
+        localStorage.setItem("similar_movies", JSON.stringify(result.results));
     };
 
     return (
@@ -78,6 +81,7 @@ const FetchProvider = ({ children }) => {
                 topCast,
                 fetchTopCast,
                 similarMovies,
+                fetchSimilarMovies,
             }}
         >
             {children}

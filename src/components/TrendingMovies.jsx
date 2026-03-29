@@ -2,15 +2,16 @@ import { Link } from "react-router-dom";
 import { useFetch } from "../context/FetchProvider";
 
 const TrendingMovies = ({ id, title, release_date, rating, image }) => {
-    const { fetchMovieDetail, fetchTopCast } = useFetch();
+    const { fetchMovieDetail, fetchTopCast, fetchSimilarMovies } = useFetch();
     return (
         <Link
             onClick={() => {
                 fetchMovieDetail(id);
                 fetchTopCast(id);
+                fetchSimilarMovies(id);
             }}
             to={"/movie_detail"}
-            className="block movie_card  border rounded-[20px] overflow-hidden pb-3 hover:-translate-y-1 transition-transform duration-200 hover:shadow-lg hover:scale-105"
+            className="block movie_card  border rounded-[20px] overflow-hidden pb-3 md:hover:-translate-y-1 transition-transform duration-200 hover:shadow-lg md:hover:scale-105"
         >
             <div className="movie_image h-[200px] md:h-[220px] bg-gray-400 relative">
                 <img
