@@ -13,6 +13,16 @@ export default {
                 cream: "#EAB308",
                 grass: "#198754",
             },
+            keyframes: {
+                shimmer: {
+                    "0%": { backgroundPosition: "-200% 0" },
+                    "100%": { backgroundPosition: "200% 0" },
+                },
+            },
+            animation: {
+                shimmer: "shimmer 2.5s infinite linear",
+                pulseSoft: "pulseSoft 2s ease-in-out infinite",
+            },
         },
         fontFamily: {
             Jost: ["Jost", "sans-serif"],

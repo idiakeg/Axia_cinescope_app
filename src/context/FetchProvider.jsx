@@ -5,11 +5,17 @@ const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 const FetchContext = createContext();
 
 const FetchProvider = ({ children }) => {
-    const [trendingMovies, setTrendingMovies] = useState([]);
-    const [movieGenre, setMovieGenre] = useState([]);
-    const [movieDetail, setMovieDetail] = useState([]);
-    const [topCast, setTopCast] = useState([]);
-    const [similarMovies, setSimilarMovies] = useState([]);
+    const [trendingMovies, setTrendingMovies] = useState(
+        JSON.parse(localStorage.getItem("trending_movies")) || []
+    );
+    const [movieGenre, setMovieGenre] = useState(() => {
+        JSON.parse(localStorage.getItem("movie_genre")) || [];
+    });
+    const [movieDetail, setMovieDetail] = useState(null);
+    const [topCast, setTopCast] = useState(null);
+    const [similarMovies, setSimilarMovies] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchTrendingMovie();
@@ -18,24 +24,50 @@ const FetchProvider = ({ children }) => {
 
     // ====> Fetch trending movies
     const fetchTrendingMovie = async () => {
-        const response = await fetch(
-            `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`
-        );
-        const result = await response.json();
-        console.log("trending movies: ", result);
-        setTrendingMovies(result);
-        localStorage.setItem("trending_movies", JSON.stringify(result.results));
+        try {
+            // only show loading data if there is no movie in the localstorage
+            if (trendingMovies.length === 0) setIsLoading(true);
+            const response = await fetch(
+                `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch jobs.");
+            }
+            const result = await response.json();
+
+            console.log("trending movies: ", result);
+            setTrendingMovies(result.results);
+            localStorage.setItem(
+                "trending_movies",
+                JSON.stringify(result.results)
+            );
+        } catch (error) {
+            setError(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // ====> Fetch movie genre
     const fetchMovieGenre = async () => {
-        const response = await fetch(
-            `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
-        );
-        const result = await response.json();
-        setMovieGenre(result.genres);
-        console.log(result.genres);
-        localStorage.setItem("movie_genre", JSON.stringify(result.genres));
+        try {
+            // only show loading data if there is no movie in the localstorage
+            if (movieGenre.length === 0) setIsLoading(true);
+            const response = await fetch(
+                `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to get Genre.");
+            }
+            const result = await response.json();
+            setMovieGenre(result.genres);
+            console.log(result.genres);
+            localStorage.setItem("movie_genre", JSON.stringify(result.genres));
+        } catch (error) {
+            setError(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // ====> Fetch movie details
@@ -82,6 +114,8 @@ const FetchProvider = ({ children }) => {
                 fetchTopCast,
                 similarMovies,
                 fetchSimilarMovies,
+                isLoading,
+                error,
             }}
         >
             {children}

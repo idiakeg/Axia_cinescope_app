@@ -25,3 +25,17 @@ body {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 }
+
+.skeleton_container {
+    animation: skeleton_container 1s linear infinite alternate;
+}
+
+@keyframes skeleton_container {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.018);
+    }
+}

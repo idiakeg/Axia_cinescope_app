@@ -1,15 +1,16 @@
 import default_avatar from "../assets/default_avatar.png";
 
 const TopCast = ({ image, cast_name, character }) => {
+    const renderedImage = image
+        ? `https://image.tmdb.org/t/p/w300${image}`
+        : default_avatar;
+
     return (
         <div className="top_cast_card">
             <div className="cast_card w-[150px] flex flex-col items-center leading-tight">
-                <div className="w-[75px] md:w-[100px] h-[75px] md:h-[100px] rounded-[50%] overflow-hidden mb-2">
+                <div className="w-[75px] md:w-[100px] h-[75px] md:h-[100px] rounded-[50%] overflow-hidden mb-2 bg-gray-400">
                     <img
-                        src={
-                            `https://image.tmdb.org/t/p/w300${image}` ||
-                            default_avatar
-                        }
+                        src={renderedImage}
                         alt="cast member"
                         className="w-full h-full object-cover"
                     />
