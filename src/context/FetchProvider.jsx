@@ -20,54 +20,28 @@ const FetchProvider = ({ children }) => {
     useEffect(() => {
         fetchTrendingMovie();
         fetchMovieGenre();
+        fetchTopCast(687163);
+        fetchSimilarMovies(1327819);
     }, []);
 
     // ====> Fetch trending movies
     const fetchTrendingMovie = async () => {
-        try {
-            // only show loading data if there is no movie in the localstorage
-            if (trendingMovies.length === 0) setIsLoading(true);
-            const response = await fetch(
-                `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`
-            );
-            if (!response.ok) {
-                throw new Error("Failed to fetch jobs.");
-            }
-            const result = await response.json();
-
-            console.log("trending movies: ", result);
-            setTrendingMovies(result.results);
-            localStorage.setItem(
-                "trending_movies",
-                JSON.stringify(result.results)
-            );
-        } catch (error) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
-        }
+        const response = await fetch(
+            `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`
+        );
+        const result = await response.json();
+        console.log("trending movies: ", result);
+        setTrendingMovies(result);
     };
 
     // ====> Fetch movie genre
     const fetchMovieGenre = async () => {
-        try {
-            // only show loading data if there is no movie in the localstorage
-            if (movieGenre.length === 0) setIsLoading(true);
-            const response = await fetch(
-                `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
-            );
-            if (!response.ok) {
-                throw new Error("Failed to get Genre.");
-            }
-            const result = await response.json();
-            setMovieGenre(result.genres);
-            console.log(result.genres);
-            localStorage.setItem("movie_genre", JSON.stringify(result.genres));
-        } catch (error) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
-        }
+        const response = await fetch(
+            `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
+        );
+        const result = await response.json();
+        setMovieGenre(result.genres);
+        console.log(result.genres);
     };
 
     // ====> Fetch movie details
@@ -78,7 +52,6 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setMovieDetail(result);
         console.log("movie detail: ", result);
-        localStorage.setItem("movie_detail", JSON.stringify(result));
     };
 
     // ====> Fetch top cast
@@ -89,7 +62,6 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setTopCast(result.cast);
         console.log("top cast: ", result.cast);
-        localStorage.setItem("top_cast", JSON.stringify(result.cast));
     };
 
     // ====> Fetch similar movies
@@ -100,7 +72,6 @@ const FetchProvider = ({ children }) => {
         const result = await response.json();
         setSimilarMovies(result.results);
         console.log("similar movies: ", result.results);
-        localStorage.setItem("similar_movies", JSON.stringify(result.results));
     };
 
     return (
@@ -113,9 +84,6 @@ const FetchProvider = ({ children }) => {
                 topCast,
                 fetchTopCast,
                 similarMovies,
-                fetchSimilarMovies,
-                isLoading,
-                error,
             }}
         >
             {children}
