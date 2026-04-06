@@ -22,7 +22,11 @@ const MovieDetailPage = () => {
                     <i className="ri-arrow-left-line text-[20px]"></i>
                 </Link>
                 {/* movie banner */}
-                <div className="movie_banner h-[450px]">
+                <div
+                    className={`movie_banner h-[450px] ${
+                        movieDetail ? "" : "bg-gray-400 rounded-xl"
+                    }`}
+                >
                     <img
                         src={`https://image.tmdb.org/t/p/w1280${movieDetail?.backdrop_path}`}
                         alt="movie banner"
@@ -31,7 +35,7 @@ const MovieDetailPage = () => {
                 </div>
                 {/* movie detail */}
                 <div className="movie_full_detail flex gap-4 md:gap-[40px] flex-col lg:flex-row">
-                    <div className="movie_image lg:w-[30%] lg:rounded-[30px] h-[200px] lg:h-auto w-full overflow-hidden rounded-xl">
+                    <div className="movie_image lg:w-[30%] lg:rounded-[30px] h-[200px] lg:h-auto w-full overflow-hidden rounded-xl bg-gray-300">
                         <img
                             src={`https://image.tmdb.org/t/p/w1280${movieDetail?.poster_path}`}
                             alt="movie banner"
@@ -64,7 +68,7 @@ const MovieDetailPage = () => {
                             </span>
                         </div>
                         <p className="text-justify text-[12px] md:text-[14px]">
-                            {movieDetail.overview}
+                            {movieDetail?.overview}
                         </p>
                         <button className="border border-red-300 px-3 md:px-4 py-1 rounded-[20px] flex items-center bg-red-400 text-white btn_hover hover:shadow-md text-[14px] md:text-[16px]">
                             <i className="ri-heart-fill mr-[2px] md:mr-2"></i>

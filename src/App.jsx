@@ -9,15 +9,15 @@ import FetchProvider from "./context/FetchProvider";
 function App() {
     return (
         <BrowserRouter>
+            <Navbar />
             <FetchProvider>
-                <Navbar />
                 <Routes>
                     <Route path="/" element={<Homepage />} />
                     <Route path="/movie_detail" element={<MovieDetailPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
-                <Footer />
             </FetchProvider>
+            <Footer />
         </BrowserRouter>
     );
 }

@@ -5,11 +5,32 @@ import { useFetch } from "../context/FetchProvider";
 import getGenre from "../utils/getGenre";
 import GenreList from "../components/GenreList";
 import TrendingMovies from "../components/TrendingMovies";
+import ErrorComponent from "../components/Error";
+import HomepageLoading from "./HomepageLoading";
 // import HomepageLoading from "./HomepageLoading";
 
 const Homepage = () => {
-    const { movieGenre, trendingMovies, fetchMovieDetail, fetchTopCast } =
-        useFetch();
+    const {
+        movieGenre,
+        trendingMovies,
+        fetchMovieDetail,
+        fetchTopCast,
+        fetchSimilarMovies,
+        error,
+        isLoading,
+    } = useFetch();
+
+    if (isLoading) {
+        return (
+            <p className="mt-[80px] min-h-[calc(100dvh-80px)] py-5 pb-10">
+                <HomepageLoading />
+            </p>
+        );
+    }
+
+    if (error) {
+        return <ErrorComponent error={error.message} />;
+    }
     const [highlightMovie, ...remainingMovies] = trendingMovies.results || [];
     const genreList = getGenre(highlightMovie, movieGenre);
 
@@ -40,6 +61,7 @@ const Homepage = () => {
                         onClick={() => {
                             fetchMovieDetail(highlightMovie?.id);
                             fetchTopCast(highlightMovie?.id);
+                            fetchSimilarMovies(highlightMovie?.id);
                         }}
                     >
                         View Details
