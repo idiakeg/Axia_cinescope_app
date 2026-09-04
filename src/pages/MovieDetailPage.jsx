@@ -3,14 +3,19 @@ import { useFetch } from "../context/FetchProvider";
 import formatRuntime from "../utils/getRunTIme";
 import TopCast from "../components/TopCast";
 import SimilarMovies from "../components/SimilarMovies";
+import HomepageLoading from "./HomepageLoading";
 
 const MovieDetailPage = () => {
     const navigate = useNavigate();
-    const { movieDetail, topCast, similarMovies } = useFetch();
+    const { movieDetail, topCast, similarMovies, isLoading } = useFetch();
 
     const runTime = formatRuntime(movieDetail?.runtime);
 
     console.log("movie detail from movie details page: ", movieDetail);
+
+    if (isLoading) {
+        return <HomepageLoading />;
+    }
 
     return (
         <div className="mt-[80px] min-h-[calc(100dvh-80px)] py-5 pb-10">
@@ -23,7 +28,7 @@ const MovieDetailPage = () => {
                 </Link>
                 {/* movie banner */}
                 <div
-                    className={`movie_banner h-[450px] ${
+                    className={`movie_banner h-[450px] bg-gray-300 ${
                         movieDetail ? "" : "bg-gray-400 rounded-xl"
                     }`}
                 >
