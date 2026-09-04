@@ -24,53 +24,47 @@ const FetchProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchTrendingMovie();
-        fetchMovieGenre();
+        const fetchingInitialData = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                await Promise.all([fetchTrendingMovie(), fetchMovieGenre()]);
+            } catch (err) {
+                setError(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchingInitialData();
     }, []);
 
     // ====> Fetch trending movies
     const fetchTrendingMovie = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch(
-                `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`
-            );
-            if (!response.ok) {
-                console.log("response: ", response);
-                throw new Error("Failed to fetch trending movies.");
-            }
-            const result = await response.json();
-            console.log("trending movies: ", result);
-            setTrendingMovies(result);
-            localStorage.setItem(
-                "trending_movies",
-                JSON.stringify(result.results)
-            );
-        } catch (error) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
+        const response = await fetch(
+            `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`
+        );
+        if (!response.ok) {
+            console.log("response: ", response);
+            throw new Error("Failed to fetch trending movies.");
         }
+        const result = await response.json();
+        console.log("trending movies: ", result);
+        setTrendingMovies(result);
+        localStorage.setItem("trending_movies", JSON.stringify(result.results));
     };
     // ====> Fetch movie genre
     const fetchMovieGenre = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch(
-                `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
-            );
-            if (!response.ok) {
-                throw new Error("Failed to fetch movie genre.");
-            }
-            const result = await response.json();
-            setMovieGenre(result.genres);
-            console.log("movie_genre: ", result.genres);
-            localStorage.setItem("movie_genre", JSON.stringify(result.genres));
-        } catch (error) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
+        const response = await fetch(
+            `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
+        );
+        if (!response.ok) {
+            throw new Error("Failed to fetch movie genre.");
         }
+        const result = await response.json();
+        setMovieGenre(result.genres);
+        console.log("movie_genre: ", result.genres);
+        localStorage.setItem("movie_genre", JSON.stringify(result.genres));
     };
 
     // ====> Fetch movie details
